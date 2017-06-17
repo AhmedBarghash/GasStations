@@ -1,17 +1,16 @@
 package com.badrtask.gasstations2.networkmanager;
 
-import java.net.URL;
-
 import android.util.Log;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.ProtocolException;
 import java.net.HttpURLConnection;
-import java.io.BufferedInputStream;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 
 /**
  * Created by Ahmed Osama  on 6/16/2017.
@@ -36,6 +35,7 @@ public class HttpHandler {
             URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+
             // read the response
             InputStream in = new BufferedInputStream(conn.getInputStream());
             response = convertStreamToString(in);

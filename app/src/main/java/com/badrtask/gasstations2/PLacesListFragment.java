@@ -1,18 +1,22 @@
 package com.badrtask.gasstations2;
 
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import java.util.ArrayList;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.view.LayoutInflater;
-import android.support.v4.app.Fragment;
-import com.badrtask.gasstations2.pojos.Place;
+
 import com.badrtask.gasstations2.adapter.CustomAdapter;
 import com.badrtask.gasstations2.locationmanager.GPSTracker;
+import com.badrtask.gasstations2.pojos.Place;
+
+import java.util.ArrayList;
 
 public class PLacesListFragment extends Fragment {
 
+    private Location placelocation;
     private View view;
 
     /// Array list will be in the listview.
@@ -60,6 +64,8 @@ public class PLacesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        placelocation = new Location("place Location");
+
         // creating GPS Class object
         gps = new GPSTracker(getActivity());
 
@@ -68,6 +74,10 @@ public class PLacesListFragment extends Fragment {
             // Can't get user's current location
             gps.showSettingsAlert();
         }/// End of if
+        else {
+            placelocation.setLatitude(gps.getLatitude());
+            placelocation.setLongitude(gps.getLongitude());
+        }
 
         //This layout contains your list view
         view = inflater.inflate(R.layout.fragment_places_list, container, false);
@@ -82,7 +92,7 @@ public class PLacesListFragment extends Fragment {
         gasStationList = activity.getGasStationPlacesList();
 
         /// Create an object from the CustomAdapter i made and pass the Context and the list of the Gas Station Array. to it
-        customAdapterobj = new CustomAdapter(getActivity(), gasStationList);
+        customAdapterobj = new CustomAdapter(getActivity(), gasStationList, placelocation);
 
         // Setting the Adapter to the list
         listview.setAdapter(customAdapterobj);
