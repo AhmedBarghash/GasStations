@@ -1,6 +1,7 @@
 package com.badrtask.gasstations2;
 
 
+import android.location.Location;
 import android.util.Log;
 import android.os.Bundle;
 
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
     private double longitude;
     private double latitude;
 
+    private Location mylocation;
+    private Location otherLocation;
+
     // Tag of the MainActivity to see the Log by the name of the Activty.
     private String TAG = MainActivity.class.getSimpleName();
 
@@ -48,10 +52,10 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
     private static String url;
 
     /// Lsit of Gas Station will pe parsed throw the Delegate.
-    private ArrayList<Place> GasStationList;
+    private ArrayList<Place> gasStationList;
 
     // Object from Gas Station Place.
-    private Place GasStation;
+    private Place gasStation;
 
     // flag for Internet connection status
     private Boolean isInternetPresent = false;
@@ -79,9 +83,14 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
         // creating GPS Class object
         gps = new GPSTracker(this);
 
+        mylocation = new Location("point A");
+        mylocation.setLatitude(gps.getLatitude());
+        mylocation.setLongitude(gps.getLongitude());
+
+        otherLocation = new Location("point B");
         url = "https://maps.googleapis.com/maps/api/place/search/json?location=" + gps.getLatitude() + "," + gps.getLongitude() + "&radius=1000&types=gas_station&key=AIzaSyDGFElSfFOOdyACz355cXbr8ZLY0t2T8pQ";
 
-        GasStationList = new ArrayList<>();
+        gasStationList = new ArrayList<>();
 
         // Check if Internet present
         isInternetPresent = cd.isConnectingToInternet();
@@ -160,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
 
                     // looping through All Contacts
                     for (int i = 0; i < results.length(); i++) {
-                        GasStation = new Place();
+                        gasStation = new Place();
                         JSONObject c = results.getJSONObject(i);
 
                         String name = c.getString("name");
@@ -169,14 +178,14 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
                         JSONObject location = geometry.getJSONObject("location");
                         double lat = location.getDouble("lat");
                         double lng = location.getDouble("lng");
+                        otherLocation.setLatitude(lat);
+                        otherLocation.setLongitude(lng);
+                        gasStation.setName(name);
+                        gasStation.setDistance(mylocation.distanceTo(otherLocation));
+                        gasStation.setLat(lat);
+                        gasStation.setLng(lng);
 
-                        GasStation.setName(name);
-
-                        GasStation.setDistance(distance(gps.getLatitude(), gps.getLongitude(), lat, lng));
-                        GasStation.setLat(lat);
-                        GasStation.setLng(lng);
-
-                        GasStationList.add(GasStation);
+                        gasStationList.add(gasStation);
                         System.out.println("---------------->Name is " + name + "\t lat: " + lat + "\t lat: " + lng + "\n");
                     }
                 } catch (final JSONException e) {
@@ -234,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
      */
     @Override
     public ArrayList<Place> getGasStationPlacesList() {
-        return GasStationList;
+        return gasStationList;
     }
 
 

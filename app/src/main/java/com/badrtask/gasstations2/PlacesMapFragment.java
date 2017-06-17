@@ -115,7 +115,7 @@ public class PlacesMapFragment extends Fragment {
                 GasStationList = activity.getGasStationPlacesList();
                 for (int i = 0; i < GasStationList.size(); i++) {
                     sydney = new LatLng(GasStationList.get(i).getLat(), GasStationList.get(i).getLng());
-                    googleMap.addMarker(new MarkerOptions().position(sydney).title(GasStationList.get(i).getName()).snippet("Marker Description"));
+                    googleMap.addMarker(new MarkerOptions().position(sydney).title(GasStationList.get(i).getName()).snippet(String.valueOf(GasStationList.get(i).getDistance())));
                     // For zooming automatically to the location of the marker
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(15).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

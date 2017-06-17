@@ -83,7 +83,7 @@ public class CustomAdapter extends BaseAdapter {
         holder.ts = (TextView) rowView.findViewById(R.id.rating);
 
         holder.tv.setText(GasStationList.get(position).getName());
-       // holder.ts.setText(String.valueOf((int) GasStationList.get(position).getDistance()));
+        holder.ts.setText(String.valueOf((int) GasStationList.get(position).getDistance())+"");
         return rowView;
     }
 
