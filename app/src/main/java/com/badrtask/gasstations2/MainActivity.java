@@ -1,56 +1,46 @@
 package com.badrtask.gasstations2;
 
 
+import android.app.ProgressDialog;
 import android.location.Location;
-import android.util.Log;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MenuItem;
+
+import com.badrtask.gasstations2.delegate.GasStationDelegate;
+import com.badrtask.gasstations2.dialogmanager.AlertDialogManager;
+import com.badrtask.gasstations2.locationmanager.GPSTracker;
+import com.badrtask.gasstations2.networkmanager.ConnectionDetector;
+import com.badrtask.gasstations2.networkmanager.HttpHandler;
+import com.badrtask.gasstations2.pojos.Place;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import android.os.AsyncTask;
-import android.view.MenuItem;
-
-import org.json.JSONException;
-
-import android.app.ProgressDialog;
-import android.support.v4.app.Fragment;
-import android.support.annotation.NonNull;
-
-import com.badrtask.gasstations2.pojos.Place;
-
-import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.BottomNavigationView;
-
-import com.badrtask.gasstations2.locationmanager.GPSTracker;
-import com.badrtask.gasstations2.networkmanager.HttpHandler;
-import com.badrtask.gasstations2.delegate.GasStationDelegate;
-import com.badrtask.gasstations2.dialogmanager.AlertDialogManager;
-import com.badrtask.gasstations2.networkmanager.ConnectionDetector;
 
 
 //// Main Activty implements GasStationDelegate so can parse the List of station to the Fragments
 public class MainActivity extends AppCompatActivity implements GasStationDelegate {
 
+    // URL to get contacts JSON
+    private static String url;
     // My location.
     private double longitude;
     private double latitude;
-
     private Location mylocation;
     private Location otherLocation;
-
     // Tag of the MainActivity to see the Log by the name of the Activty.
     private String TAG = MainActivity.class.getSimpleName();
-
     /// ProgressDialog
     private ProgressDialog pDialog;
-
-    // URL to get contacts JSON
-    private static String url;
-
     /// Lsit of Gas Station will pe parsed throw the Delegate.
     private ArrayList<Place> gasStationList;
 
@@ -130,6 +120,14 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
     }
 
     /**
+     * @return
+     */
+    @Override
+    public ArrayList<Place> getGasStationPlacesList() {
+        return gasStationList;
+    }
+
+    /**
      * Async task class to get json by making HTTP call
      */
     private class GasStationList extends AsyncTask<Void, Void, Void> {
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
                         JSONObject c = results.getJSONObject(i);
 
                         String name = c.getString("name");
-                        //   String rating = c.getString("rating");
                         JSONObject geometry = c.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
                         double lat = location.getDouble("lat");
@@ -193,10 +190,8 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Json parsing error: " + e.getMessage(),
-//                                    Toast.LENGTH_LONG)
-//                                    .show();
+                            alert.showAlertDialog(getApplicationContext(), "Something Wrong with the Server"
+                                    , "Make Sure your GPS and Internet Working First and then reopen the App", true);
                         }
                     });
 
@@ -206,10 +201,8 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        Toast.makeText(getApplicationContext(),
-//                                "Couldn't get json from server. Check LogCat for possible errors!",
-//                                Toast.LENGTH_LONG)
-//                                .show();
+                        alert.showAlertDialog(getApplicationContext(), "Something Wrong with the Server"
+                                , "Make Sure your GPS and Internet Working First and then reopen the App", true);
                     }
                 });
 
@@ -237,36 +230,4 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
             transaction.commit();
         }
     }
-
-    /**
-     * @return
-     */
-    @Override
-    public ArrayList<Place> getGasStationPlacesList() {
-        return gasStationList;
-    }
-
-
-    /// To cal calculate the distance
-    private double distance(double lat1, double lon1, double lat2, double lon2) {
-        double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1))
-                * Math.sin(deg2rad(lat2))
-                + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2))
-                * Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        dist = dist * 60 * 1.1515;
-        return (dist);
-    }
-
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    private double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
-
 }
