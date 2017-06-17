@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Gas Stations</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="item_2">Stations on a Map</string>
+    <string name="item_1">Stations on a list</string>
+</resources>
