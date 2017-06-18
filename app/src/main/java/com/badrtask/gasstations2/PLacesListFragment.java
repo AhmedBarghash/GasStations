@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.badrtask.gasstations2.adapter.CustomAdapter;
 import com.badrtask.gasstations2.locationmanager.GPSTracker;
-import com.badrtask.gasstations2.pojos.Place;
+import com.badrtask.gasstations2.pojos.Result;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,7 @@ public class PLacesListFragment extends Fragment {
     private View view;
 
     /// Array list will be in the listview.
-    private ArrayList<Place> gasStationList;
+    private ArrayList<Result> gasStationList;
 
     // GPS Location to make sure the user didn't close the GPS.
     private GPSTracker gps;

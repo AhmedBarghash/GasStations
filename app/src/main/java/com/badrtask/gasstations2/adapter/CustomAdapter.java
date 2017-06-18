@@ -8,11 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.badrtask.gasstations2.R;
-import com.badrtask.gasstations2.pojos.Place;
+import com.badrtask.gasstations2.pojos.Result;
 
 import java.util.ArrayList;
 
@@ -27,17 +26,18 @@ public class CustomAdapter extends BaseAdapter {
     private Location mylocation;
     private Location otherLocation;
     private Context context;
-    private ArrayList<Place> GasStationList;
+    private ArrayList<Result> GasStationList;
 
     /**
      * @param context
      * @param GasStationList
      */
-    public CustomAdapter(Context context, ArrayList<Place> GasStationList, Location location) {
+    public CustomAdapter(Context context, ArrayList<Result> GasStationList, Location location) {
         // TODO Auto-generated constructor stub
         this.mylocation = location;
         this.context = context;
         this.GasStationList = GasStationList;
+
         otherLocation = new Location("PLace Location");
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -89,20 +89,20 @@ public class CustomAdapter extends BaseAdapter {
         holder.ts = (TextView) rowView.findViewById(R.id.rating);
 
         holder.tv.setText(GasStationList.get(position).getName());
-        holder.ts.setText(String.valueOf((int) GasStationList.get(position).getDistance()) + "meter");
-
+        holder.ts.setText(String.valueOf((int) GasStationList.get(position).getDistance()) + "  meter");
 
         rowView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                otherLocation.setLongitude(GasStationList.get(position).getLng());
-                otherLocation.setLatitude(GasStationList.get(position).getLat());
+                otherLocation.setLongitude(GasStationList.get(position).getGeometry().getLocation().getLng());
+                otherLocation.setLatitude(GasStationList.get(position).getGeometry().getLocation().getLat());
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse("http://maps.google.com/maps?daddr=" + GasStationList.get(position).getLat() + "," + GasStationList.get(position).getLng()));
+                        Uri.parse("http://maps.google.com/maps?daddr=" + GasStationList.get(position).getGeometry().getLocation().getLat() + "," + GasStationList.get(position).getGeometry().getLocation().getLng()));
                 context.startActivity(intent);
             }
         });
+
         return rowView;
     }
 
@@ -111,9 +111,6 @@ public class CustomAdapter extends BaseAdapter {
      */
     public class Holder {
         TextView tv;
-        ImageView img;
         TextView ts;
-
     }
-
 }

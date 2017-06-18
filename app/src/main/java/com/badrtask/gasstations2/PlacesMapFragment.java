@@ -2,29 +2,26 @@ package com.badrtask.gasstations2;
 
 
 import android.Manifest;
-import android.os.Bundle;
-import android.view.View;
-
-import java.util.ArrayList;
-
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import android.support.v4.app.Fragment;
 import android.content.pm.PackageManager;
-
-import com.google.android.gms.maps.model.LatLng;
-
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.google.android.gms.maps.MapView;
-import com.badrtask.gasstations2.pojos.Place;
+import com.badrtask.gasstations2.locationmanager.GPSTracker;
+import com.badrtask.gasstations2.pojos.Result;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.badrtask.gasstations2.locationmanager.GPSTracker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 
 public class PlacesMapFragment extends Fragment {
@@ -39,7 +36,7 @@ public class PlacesMapFragment extends Fragment {
 
     /// Array list will be in the listview.
 
-    private ArrayList<Place> GasStationList;
+    private ArrayList<Result> GasStationList;
 
     private View rootView;
 
@@ -114,8 +111,8 @@ public class PlacesMapFragment extends Fragment {
 
                 GasStationList = activity.getGasStationPlacesList();
                 for (int i = 0; i < GasStationList.size(); i++) {
-                    sydney = new LatLng(GasStationList.get(i).getLat(), GasStationList.get(i).getLng());
-                    googleMap.addMarker(new MarkerOptions().position(sydney).title(GasStationList.get(i).getName()).snippet(String.valueOf(GasStationList.get(i).getDistance())));
+                    sydney = new LatLng(GasStationList.get(i).getGeometry().getLocation().getLat(), GasStationList.get(i).getGeometry().getLocation().getLng());
+                    googleMap.addMarker(new MarkerOptions().position(sydney).title(GasStationList.get(i).getName()).snippet("Rating : " + String.valueOf(GasStationList.get(i).getRating())));
                     // For zooming automatically to the location of the marker
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(15).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
