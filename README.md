@@ -16,7 +16,23 @@ stations with pin annotations. When the user taps on one of the annotations, it 
 directions to the associated gas station.
 
 /////////////////////////////////// NOTES //////////////////////////////
+
+
 1- The minSdkVersion is 19 and the targetSdkVersion is 25.
+
+
+
 2- Open the Internet and the GPS of your so the app work right.
+
+
+
 3- Make sure you open GPS in a free space so you can get accurate results.
+
+
+
+4-The App tested and debuged on Smasung tablet - android version (4.4.4) and lollipop
+
+
+
+
 
