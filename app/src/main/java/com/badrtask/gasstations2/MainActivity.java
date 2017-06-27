@@ -2,6 +2,7 @@ package com.badrtask.gasstations2;
 
 
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.badrtask.gasstations2.constants.ConstantsClass;
 import com.badrtask.gasstations2.delegate.GasStationDelegate;
@@ -34,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
 
 
     // My location.
-    private double longitude;
-    private double latitude;
     private Location mylocation;
     private Location otherLocation;
 
@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
     /// ProgressDialog
     private ProgressDialog pDialog;
 
-
     /**
      * @param savedInstanceState
      */
@@ -78,23 +77,29 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
         mylocation.setLongitude(gps.getLongitude());
 
         gasStationList = new ArrayList<>();
-
         // Check if Internet present
         isInternetPresent = cd.isConnectingToInternet();
         if (!isInternetPresent) {
             // Internet Connection is not present
-            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to working Internet connection", false);
+            alert.showAlertDialog(MainActivity.this, "Network", "There is no INternet connection", true);
             // stop executing code by return
         } else {
-            // Showing progress dialog
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+            // check if GPS location can get
+            if (!gps.canGetLocation()) {// Startt of if
+                // Can't get user's current location
+//                alert.showAlertDialog(MainActivity.this,"GPS is settings","There is no INternet connection",true);
+                gps.showSettingsAlert();
+            }/// End of if
+            else {
+                // Showing progress dialog
+                pDialog = new ProgressDialog(MainActivity.this);
+                pDialog.setMessage("Please wait...");
+                pDialog.setCancelable(false);
+                pDialog.show();
 
-            /// Start to connect to Google APi Using retrofit.
-            start();
+                /// Start to connect to Google APi Using retrofit.
+                start();
+            }
         }
 
         /// This BottomNavigationView used to create a tabs at the end of the
@@ -144,11 +149,13 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
         /// Get the list of results form the response
         gasStationList = response.body().getResults();
         otherLocation = new Location("point B");
+        // For loop to calculate  the distance of every location
         for (int i = 0; i < gasStationList.size(); i++) {
             otherLocation.setLatitude(response.body().getResults().get(i).getGeometry().getLocation().getLat());
             otherLocation.setLongitude(response.body().getResults().get(i).getGeometry().getLocation().getLng());
             gasStationList.get(i).setDistance(mylocation.distanceTo(otherLocation));
         }
+        // Show the Fragments after loading the data.
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, PLacesListFragment.newInstance());
         transaction.commit();
@@ -156,11 +163,50 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
 
     @Override
     public void onFailure(Call<PlacesPOJO> call, Throwable t) {
-        System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrrrrrror \n " + t);
+        alert.showAlertDialog(MainActivity.this, "Server is Down Error",
+                "Please connect to working Internet connection and re Open the App", false);
     }
 
     @Override
     public ArrayList<Result> getGasStationPlacesList() {
         return gasStationList;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            gps.stopUsingGPS();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case 100: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(getApplicationContext(), "permission was granted", Toast.LENGTH_SHORT).show();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    // Showing progress dialog
+                    pDialog = new ProgressDialog(MainActivity.this);
+                    pDialog.setMessage("Please wait...");
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+
+                    /// Start to connect to Google APi Using retrofit.
+                    start();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+        }
     }
 }

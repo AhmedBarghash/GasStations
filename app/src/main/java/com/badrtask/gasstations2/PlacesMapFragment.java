@@ -67,14 +67,14 @@ public class PlacesMapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // creating GPS Class object
-        gps = new GPSTracker(getActivity());
-
-        // check if GPS location can get
-        if (!gps.canGetLocation()) {// Startt of if
-            // Can't get user's current location
-            gps.showSettingsAlert();
-        }/// End of if
+//        // creating GPS Class object
+//        gps = new GPSTracker(getActivity());
+//
+//        // check if GPS location can get
+//        if (!gps.canGetLocation()) {// Startt of if
+//            // Can't get user's current location
+//            gps.showSettingsAlert();
+//        }/// End of if
 
         rootView = inflater.inflate(R.layout.fragment_places_map, container, false);
 
