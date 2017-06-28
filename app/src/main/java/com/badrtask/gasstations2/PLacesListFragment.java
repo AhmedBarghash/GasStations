@@ -33,8 +33,6 @@ public class PLacesListFragment extends Fragment {
 
     // Reference from MainActivity to call the Method GetGasStatioList.
     private MainActivity activity;
-
-
     /**
      *
      * @return
@@ -43,7 +41,6 @@ public class PLacesListFragment extends Fragment {
     public static PLacesListFragment newInstance() {
         return new PLacesListFragment();
     }
-
     /**
      *
      * @param savedInstanceState
@@ -52,7 +49,6 @@ public class PLacesListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     /**
      *
      * @param inflater
@@ -65,19 +61,6 @@ public class PLacesListFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         placelocation = new Location("place Location");
-
-//        // creating GPS Class object
-//        gps = new GPSTracker(getActivity());
-//
-//        // check if GPS location can get
-//        if (!gps.canGetLocation()) {// Startt of if
-//            // Can't get user's current location
-//            gps.showSettingsAlert();
-//        }/// End of if
-//        else {
-//            placelocation.setLatitude(gps.getLatitude());
-//            placelocation.setLongitude(gps.getLongitude());
-//        }
 
         //This layout contains your list view
         view = inflater.inflate(R.layout.fragment_places_list, container, false);

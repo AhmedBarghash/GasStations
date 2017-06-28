@@ -2,6 +2,7 @@ package com.badrtask.gasstations2;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.badrtask.gasstations2.networkmanager.ConnectionDetector;
 import com.badrtask.gasstations2.networkmanager.interfaces.ApiInterface;
 import com.badrtask.gasstations2.pojos.PlacesPOJO;
 import com.badrtask.gasstations2.pojos.Result;
+import com.badrtask.gasstations2.viewinterfaces.MainActivityInterface;
 
 import java.util.ArrayList;
 
@@ -32,11 +34,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 //// Main Activity implements GasStationDelegate so can parse the List of station to the Fragments
-public class MainActivity extends AppCompatActivity implements GasStationDelegate, Callback<PlacesPOJO> {
+public class MainActivity extends AppCompatActivity implements GasStationDelegate, Callback<PlacesPOJO>, MainActivityInterface {
 
 
     // My location.
-    private Location mylocation;
+    protected Location mylocation;
     private Location otherLocation;
 
     /// Lsit of Gas Station will pe parsed throw the Delegate.
@@ -128,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
     }
 
     /// Applying the retrofit to connect to thr Google APi and get the data of the places
+    @Override
     public void start() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ConstantsClass.BASE_URL)
@@ -179,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
             gps.stopUsingGPS();
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -197,16 +199,20 @@ public class MainActivity extends AppCompatActivity implements GasStationDelegat
                     pDialog.setMessage("Please wait...");
                     pDialog.setCancelable(false);
                     pDialog.show();
-
-                    /// Start to connect to Google APi Using retrofit.
-                    start();
+                    Intent i = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(), " permission denied the app not going to work", Toast.LENGTH_SHORT).show();
+
                 }
                 return;
             }
 
         }
+        pDialog.dismiss();
     }
 }
