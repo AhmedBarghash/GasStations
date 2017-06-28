@@ -45,7 +45,7 @@ public class GPSTracker extends Service implements LocationListener {
     MainActivityInterface mainActivityInterfaceobj;
 
     public GPSTracker(Context context) {
-        this.mainActivityInterfaceobj = (MainActivityInterface) context;
+        //   this.mainActivityInterfaceobj = (MainActivityInterface) context;
         this.mContext = context;
         getLocation();
 
@@ -194,7 +194,7 @@ public class GPSTracker extends Service implements LocationListener {
     }
     @Override
     public void onLocationChanged(Location location) {
-        mainActivityInterfaceobj.start();
+        //  mainActivityInterfaceobj.start();
     }
     @Override
     public void onProviderDisabled(String provider) {
